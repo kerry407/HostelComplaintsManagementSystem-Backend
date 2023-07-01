@@ -6,6 +6,7 @@ coreschema==0.0.4
 dj-database-url==2.0.0
 Django==4.2.2
 django-auto-prefetching==0.2.12
+django-cors-headers==4.1.0
 django-filter==23.2
 django-rest-framework==0.1.0
 djangorestframework==3.14.0
