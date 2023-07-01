@@ -18,9 +18,12 @@ from .serializers import *
 from .renderers import CustomRenderer
 from ..filters import ComplaintFilter
 from .permissions import CustomPermissions, IsAdminOrReadOnly
-from authentication.models import StudentUser
+from authentication.models import StudentUser, Hostel
 
 class ComplaintsViewSet(viewsets.ModelViewSet):
+    """
+    Endpoint for Complaints (All CRUD actions)
+    """
     serializer_class = ComplaintSerializer
     queryset = Complaint.objects.all()
     search_fields = ["title", "student"]
@@ -58,12 +61,18 @@ class ComplaintsViewSet(viewsets.ModelViewSet):
         
     
 class StudentViewSet(viewsets.ModelViewSet):
+    """
+    Endpoint for accessing all students (All CRUD actions)
+    """
     queryset = StudentUser.objects.all()
     serializer_class = StudentDashBoardSerializer 
     permission_classes = [IsAdminOrReadOnly]
     renderer_classes = [CustomRenderer]
     
 class PorterViewSet(viewsets.ModelViewSet):
+    """
+    Endpoint for accessing all porters (All CRUD activites)
+    """
     queryset = PorterUser.objects.all()
     serializer_class = PorterDashBoardSerializer
     permission_classes = [IsAdminOrReadOnly]
@@ -78,11 +87,16 @@ class DashBoardCountView(AutoPrefetchViewSetMixin, views.APIView):
         student_count = StudentUser.objects.filter(user__hostel=request.user.hostel).count()
         porter_count = PorterUser.objects.filter(user__hostel=request.user.hostel).count()
         complaints_count = Complaint.objects.filter(student__user__hostel=request.user.hostel).count()
+        hostel_room_count = request.user.hostel.no_of_rooms
+        hostel_gender = request.user.hostel.gender
+        
         return Response(
             {
                 "student_count": student_count,
                 "porter_count": porter_count,
-                "complaints_count": complaints_count
+                "complaints_count": complaints_count,
+                "hostel_room_count": hostel_room_count,
+                "hostel_gender": hostel_gender
             },
             status=status.HTTP_200_OK
         )

@@ -63,8 +63,14 @@ class ChangePasswordView(generics.CreateAPIView):
     
 
 class StudentTokenObtainPairViewSet(TokenObtainPairView):
+    """
+    Endpoint for Student Login
+    """
     serializer_class = StudentTokenObtainPairSerializer
     
     
 class PorterTokenObtainPairViewSet(TokenObtainPairView):
+    """
+    Endpoint for Porter Login
+    """
     serializer_class = PorterTokenObtainPairSerializer
