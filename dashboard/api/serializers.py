@@ -16,12 +16,17 @@ class StudentDashBoardSerializer(serializers.ModelSerializer):
     def get_students_details(self, obj):
         students = StudentUser.objects.filter(user__hostel=obj.user.hostel).count()
         details_dict = {}
-        details_dict["matric_number"] = obj.user.matric_number
-        details_dict["email"] = obj.user.email 
-        details_dict["first_name"] = obj.user.first_name 
-        details_dict["last_name"] = obj.user.last_name 
-        details_dict["hostel"] = obj.user.hostel.name
-        details_dict["number_of_students_in_hostel"] = students
+        try:
+            details_dict["matric_number"] = obj.user.matric_number
+            details_dict["email"] = obj.user.email 
+            details_dict["first_name"] = obj.user.first_name 
+            details_dict["last_name"] = obj.user.last_name 
+            details_dict["hostel"] = obj.user.hostel.name
+            details_dict["number_of_students_in_hostel"] = students
+        except KeyError as e:
+            raise(e)
+        except AttributeError:
+            raise serializers.ValidationError("object has no hostel")
         return details_dict
     
     class Meta:

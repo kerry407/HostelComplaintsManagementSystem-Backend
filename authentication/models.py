@@ -35,11 +35,11 @@ class CustomUser(AbstractUser):
     username = None 
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4, max_length=6)
     email = models.EmailField(_('email address'), unique=True)
-    first_name = models.CharField(max_length=50, null=True, blank=True) 
-    last_name = models.CharField(max_length=50, null=True, blank=True)
-    gender = models.CharField(max_length=10, choices=Hostel.GENDER, null=True, blank=True)
-    matric_number = models.CharField(max_length=11, unique=True, null=True, blank=True)
-    hostel = models.OneToOneField(Hostel, on_delete=models.CASCADE, null=True, blank=True)
+    first_name = models.CharField(max_length=50) 
+    last_name = models.CharField(max_length=50)
+    gender = models.CharField(max_length=10, choices=Hostel.GENDER)
+    matric_number = models.CharField(max_length=11, unique=True)
+    hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE)
     is_student = models.BooleanField(default=False)
     is_porter = models.BooleanField(default=False)
     
