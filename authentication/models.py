@@ -26,6 +26,7 @@ class Hostel(models.Model):
     no_of_rooms = models.PositiveIntegerField()
     gender = models.CharField(max_length=10, choices=GENDER)
     
+    
     def __str__(self) -> str:
         return self.name 
 
@@ -38,13 +39,14 @@ class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=50) 
     last_name = models.CharField(max_length=50)
     gender = models.CharField(max_length=10, choices=Hostel.GENDER)
-    matric_number = models.CharField(max_length=11, unique=True)
+    matric_number = models.CharField(max_length=11, unique=True, null=True)
     hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE)
     is_student = models.BooleanField(default=False)
     is_porter = models.BooleanField(default=False)
     
+    
     USERNAME_FIELD = 'matric_number' 
-    REQUIRED_FIELDS = ["first_name", "last_name", "email"]
+    REQUIRED_FIELDS = ["first_name", "last_name"]
     
     objects = CustomUserManager()
     
@@ -57,6 +59,7 @@ class StudentUser(models.Model):
     room_no = models.CharField(max_length=5, null=True)
     block_no = models.CharField(max_length=5, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return self.user.first_name
@@ -65,6 +68,7 @@ class StudentUser(models.Model):
 class PorterUser(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, primary_key=True)
     created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return self.user.email

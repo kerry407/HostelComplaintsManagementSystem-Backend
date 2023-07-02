@@ -66,8 +66,18 @@ class StudentViewSet(viewsets.ModelViewSet):
     """
     queryset = StudentUser.objects.all()
     serializer_class = StudentDashBoardSerializer 
-    permission_classes = [IsAdminOrReadOnly]
     renderer_classes = [CustomRenderer]
+    
+    def get_queryset(self):
+        return super().get_queryset().filter(user__hostel=self.request.user.hostel)
+    
+    def get_permissions(self):
+        if self.action in ["create", "list", "retreive"]:
+            self.permission_classes = [permissions.IsAuthenticated]
+        if self.action in ["update", "partial_update", "destroy"]:
+            self.permission_classes = [CustomPermissions]
+            
+        return super().get_permissions()
     
 class PorterViewSet(viewsets.ModelViewSet):
     """
@@ -75,9 +85,18 @@ class PorterViewSet(viewsets.ModelViewSet):
     """
     queryset = PorterUser.objects.all()
     serializer_class = PorterDashBoardSerializer
-    permission_classes = [IsAdminOrReadOnly]
     renderer_classes = [CustomRenderer]
+    
+    def get_queryset(self):
+        return super().get_queryset().filter(user__hostel=self.request.user.hostel)
+    
+    def get_permissions(self):
+        if self.action in ["create", "list", "retreive"]:
+            self.permission_classes = [permissions.IsAuthenticated]
+        if self.action in ["update", "partial_update", "destroy"]:
+            self.permission_classes = [CustomPermissions]
 
+        return super().get_permissions()
 
 class DashBoardCountView(AutoPrefetchViewSetMixin, views.APIView):
     permission_classes = [permissions.IsAuthenticated]

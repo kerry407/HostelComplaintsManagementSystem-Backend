@@ -18,6 +18,10 @@ class CustomPermissions(permissions.BasePermission):
         if hasattr(obj, 'student'):
             return obj.student == request.user
         
+        if hasattr(obj, "user"):
+            return obj.user == request.usr
+    
+        
 class IsAdminOrReadOnly(permissions.BasePermission):
     
     def has_permission(self, request, view):
