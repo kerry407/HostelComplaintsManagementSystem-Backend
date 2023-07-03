@@ -15,6 +15,10 @@ class StudentDashBoardSerializer(serializers.ModelSerializer):
     
     def get_students_details(self, obj):
         students = StudentUser.objects.filter(user__hostel=obj.user.hostel).count()
+        student_complaint = Complaint.objects.filter(student=obj)
+        all_complaints = student_complaint.count()
+        resolved_complaints = student_complaint.filter(is_resolved=True).count()
+        unresolved_complaint = student_complaint.filter(is_resolved=False).count()
         details_dict = {}
         try:
             details_dict["matric_number"] = obj.user.matric_number
@@ -23,6 +27,9 @@ class StudentDashBoardSerializer(serializers.ModelSerializer):
             details_dict["last_name"] = obj.user.last_name 
             details_dict["hostel"] = obj.user.hostel.name
             details_dict["number_of_students_in_hostel"] = students
+            details_dict["all_complaints"] = all_complaints
+            details_dict["resolved_complaints"] = resolved_complaints
+            details_dict["unresolved_complaint"] = unresolved_complaint
         except KeyError as e:
             raise(e)
         except AttributeError:
@@ -39,6 +46,10 @@ class PorterDashBoardSerializer(serializers.ModelSerializer):
     def get_porter_details(self, obj):
         porters = PorterUser.objects.filter(user__hostel=obj.user.hostel).count()
         students = StudentUser.objects.filter(user__hostel=obj.user.hostel).count()
+        student_complaint = Complaint.objects.filter(hostel=obj.user.hostel)
+        all_complaints = student_complaint.count()
+        resolved_complaints = student_complaint.filter(is_resolved=True).count()
+        unresolved_complaint = student_complaint.filter(is_resolved=False).count()
         details_dict = {}
         details_dict["email"] = obj.user.email 
         details_dict["first_name"] = obj.user.first_name 
@@ -46,6 +57,9 @@ class PorterDashBoardSerializer(serializers.ModelSerializer):
         details_dict["hostel"] = obj.user.hostel.name
         details_dict["number_of_students_in_hostel"] = students
         details_dict["number_of_porters_in_hostel"] = porters 
+        details_dict["all_complaints"] = all_complaints
+        details_dict["resolved_complaints"] = resolved_complaints
+        details_dict["unresolved_complaint"] = unresolved_complaint
         return details_dict 
     
     class Meta:
@@ -54,6 +68,11 @@ class PorterDashBoardSerializer(serializers.ModelSerializer):
         
 
 class HostelSerializer(serializers.ModelSerializer):
+    complaint_by_hostel = serializers.SerializerMethodField()
+    
+    def get_complaint_by_hostel(self, obj):
+        complaints = Complaint.objects.filter(hostel=obj.name).count()
+        return complaints
     
     class Meta:
         model = Hostel

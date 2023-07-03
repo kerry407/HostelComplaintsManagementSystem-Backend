@@ -30,7 +30,7 @@ class Hostel(models.Model):
     def __str__(self) -> str:
         return self.name 
 
- 
+
  
 class CustomUser(AbstractUser):
     username = None 
