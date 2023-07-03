@@ -18,7 +18,22 @@ class Hostel(models.Model):
     HOSTELS = (
         ("Professor Biobaku Hall", "Professor Biobaku Hall"),
         ("Queen Amina Hall", "Queen Amina Hall"),
-        ("King Jaja Hall", "King Jaja hall")
+        ("King Jaja Hall", "King Jaja hall"),
+        ("Osun block", "Osun block"),
+        ("Ondo block", "Ondo block"),
+        ("Calabar block", "Calabar block"),
+        ("Anthony block", "Anthony block"),
+        ("Ekiti block", "Ekiti block"),
+        ("Oyo block", "Oyo block"),
+        ("Kwara block", "Kwara block"),
+        ("Kogi block", "Kogi block"),
+        ("Block A", "Block A"),
+        ("Block B", "Block B"),
+        ("Block C", "Block C"),
+        ("Block D", "Block D"),
+        ("Block NH", "Block NH"),
+        ("Block AKB", "Block AKB"),
+        ("Block AKB Anex", "Block AKB Anex"),
     )
     
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -62,7 +77,7 @@ class StudentUser(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     
     def __str__(self):
-        return self.user.first_name
+        return self.user.email
 
 
 class PorterUser(models.Model):

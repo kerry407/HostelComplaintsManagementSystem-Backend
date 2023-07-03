@@ -31,6 +31,34 @@ class AccountSerializer(serializers.ModelSerializer):
         new_account = CustomUser.objects.create_user(**validated_data)
         return new_account
     
+class PorterAccountSerializer(serializers.ModelSerializer):
+    password2 = serializers.CharField(style={"input_type": "password"}, write_only=True)
+    hostel_name = serializers.SerializerMethodField()
+    
+    def get_hostel_name(self, obj):
+        return obj.hostel.name
+    
+    class Meta:
+        model = CustomUser 
+        fields = ["id", "first_name", "last_name", "email", "hostel", "gender", "hostel_name", "password", "password2"]
+        extra_kwargs = {
+            "password": {"write_only": True}
+        }
+        
+    def validate(self, data):
+        if data["password"] != data["password2"]:
+            raise serializers.ValidationError("The two passwords do not match !")
+        data.pop("password2")
+        return data 
+    
+    def create(self, validated_data):
+        email = validated_data["email"]
+        confirm_account = CustomUser.objects.filter(email=email)
+        if confirm_account.exists():
+            raise serializers.ValidationError("An account already exists with this email")
+        new_account = CustomUser.objects.create_user(**validated_data)
+        return new_account
+    
 class ChangePasswordSerializer(serializers.Serializer):
     old_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)

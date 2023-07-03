@@ -3,17 +3,19 @@ from rest_framework.response import Response
 
 from django.contrib.auth import get_user_model
 from ..models import *
-from .serializers import AccountSerializer, ChangePasswordSerializer
 from dashboard.api.renderers import CustomRenderer
 from dashboard.api.permissions import CustomPermissions
 from rest_framework_simplejwt.views import TokenObtainPairView
 from .serializers import (
 StudentTokenObtainPairSerializer, 
 PorterTokenObtainPairSerializer,
+AccountSerializer,
+PorterAccountSerializer,
+ChangePasswordSerializer
 )
 
 
-class AccountCreateView(generics.CreateAPIView):
+class StudentAccountCreateView(generics.CreateAPIView):
     '''
         API endpoint for creating an account 
     '''
@@ -22,14 +24,20 @@ class AccountCreateView(generics.CreateAPIView):
     renderer_classes = [CustomRenderer]
     
     def perform_create(self, serializer):
-        if "matric_number" in self.request.data:
-            serializer.save(
-                            is_student=True
-                            ) 
-        else:
-            serializer.save(
-                            is_porter=True
-                            )
+        serializer.save(is_student=True)
+        
+
+class PorterAccountCreateView(generics.CreateAPIView):
+    '''
+        API endpoint for creating an account 
+    '''
+    serializer_class = PorterAccountSerializer
+    permission_classes = [permissions.AllowAny]
+    renderer_classes = [CustomRenderer]
+    
+    def perform_create(self, serializer):
+        serializer.save(is_porter=True)
+
         
 class AccountDetailsView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [CustomPermissions]
