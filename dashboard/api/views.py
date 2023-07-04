@@ -20,7 +20,7 @@ from ..filters import ComplaintFilter
 from .permissions import CustomPermissions, IsAdminOrReadOnly
 from authentication.models import StudentUser, Hostel
 
-class ComplaintsViewSet(viewsets.ModelViewSet):
+class ComplaintsViewSet(AutoPrefetchViewSetMixin, viewsets.ModelViewSet):
     """
     Endpoint for Complaints (All CRUD actions)
     """
@@ -60,7 +60,7 @@ class ComplaintsViewSet(viewsets.ModelViewSet):
         serializer.save(student=student, hostel=student.user.hostel)
         
     
-class StudentViewSet(viewsets.ModelViewSet):
+class StudentViewSet(AutoPrefetchViewSetMixin, viewsets.ModelViewSet):
     """
     Endpoint for accessing all students (All CRUD actions)
     """
@@ -69,17 +69,25 @@ class StudentViewSet(viewsets.ModelViewSet):
     renderer_classes = [CustomRenderer]
     
     def get_queryset(self):
-        return super().get_queryset().filter(user__hostel=self.request.user.hostel)
+        param = self.request.query_params.get("hostel")
+        user = self.request.user
+        if not user.is_anonymous:
+            return super().get_queryset().filter(user__hostel__name=user.hostel.name)
+        elif param:
+            return super().get_queryset().filter(user__hostel__name=param)
+        return super().get_queryset()
     
     def get_permissions(self):
-        if self.action in ["create", "list", "retreive"]:
+        if self.action == "create":
             self.permission_classes = [permissions.IsAuthenticated]
+        if self.action in ["list", "retreive"]:
+            self.permission_classes = [permissions.AllowAny]
         if self.action in ["update", "partial_update", "destroy"]:
             self.permission_classes = [CustomPermissions]
             
         return super().get_permissions()
     
-class PorterViewSet(viewsets.ModelViewSet):
+class PorterViewSet(AutoPrefetchViewSetMixin, viewsets.ModelViewSet):
     """
     Endpoint for accessing all porters (All CRUD activites)
     """
@@ -88,11 +96,20 @@ class PorterViewSet(viewsets.ModelViewSet):
     renderer_classes = [CustomRenderer]
     
     def get_queryset(self):
-        return super().get_queryset().filter(user__hostel=self.request.user.hostel)
+        param = self.request.query_params.get("hostel")
+        user = self.request.user
+        if not user.is_anonymous:
+            return super().get_queryset().filter(user__hostel__name=user.hostel.name)
+        elif param:
+            return super().get_queryset().filter(user__hostel__name=param)
+        return super().get_queryset()
+    
     
     def get_permissions(self):
-        if self.action in ["create", "list", "retreive"]:
+        if self.action == "create":
             self.permission_classes = [permissions.IsAuthenticated]
+        if self.action in ["list", "retreive"]:
+            self.permission_classes = [permissions.AllowAny]
         if self.action in ["update", "partial_update", "destroy"]:
             self.permission_classes = [CustomPermissions]
 
