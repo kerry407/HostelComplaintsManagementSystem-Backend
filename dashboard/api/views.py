@@ -26,7 +26,7 @@ class ComplaintsViewSet(AutoPrefetchViewSetMixin, viewsets.ModelViewSet):
     """
     serializer_class = ComplaintSerializer
     queryset = Complaint.objects.all()
-    search_fields = ["title", "student"]
+    search_fields = ["title", "student__user__first_name", "student__user__last_name"]
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = ComplaintFilter
     renderer_classes = [CustomRenderer]

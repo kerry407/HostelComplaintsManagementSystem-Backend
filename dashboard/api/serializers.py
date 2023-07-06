@@ -4,7 +4,24 @@ from authentication.models import StudentUser, PorterUser, Hostel
 from django.shortcuts import get_object_or_404       
         
 class ComplaintSerializer(serializers.ModelSerializer):
-
+    student = serializers.StringRelatedField()
+    student_first_name = serializers.SerializerMethodField()
+    student_last_name = serializers.SerializerMethodField()
+    student_room_no = serializers.SerializerMethodField()
+    student_block_no = serializers.SerializerMethodField()
+    
+    def get_student_first_name(self, obj):
+        return obj.student.user.first_name
+    
+    def get_student_last_name(self, obj):
+        return obj.student.user.last_name
+    
+    def get_student_room_no(self, obj):
+        return obj.student.room_no
+    
+    def get_student_block_no(self, obj):
+        return obj.student.block_no
+    
     class Meta:
         model = Complaint 
         fields = "__all__"
