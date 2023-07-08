@@ -20,6 +20,10 @@ class AccountSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if data["password"] != data["password2"]:
             raise serializers.ValidationError("The two passwords do not match !")
+        
+        if len(data["matric_number"]) < 9:
+            raise serializers.ValidationError("Matric number must be exactly 9 characters") 
+        
         data.pop("password2")
         return data 
     
