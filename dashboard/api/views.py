@@ -1,10 +1,7 @@
-from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import (
     viewsets,
     permissions,
-    generics,
-    serializers,
     validators,
     views,
     status
@@ -17,7 +14,7 @@ from rest_framework.filters import SearchFilter
 from .serializers import *
 from .renderers import CustomRenderer
 from ..filters import ComplaintFilter
-from .permissions import CustomPermissions, IsAdminOrReadOnly
+from .permissions import CustomPermissions
 from authentication.models import StudentUser, Hostel
 
 class ComplaintsViewSet(AutoPrefetchViewSetMixin, viewsets.ModelViewSet):
@@ -116,6 +113,9 @@ class PorterViewSet(AutoPrefetchViewSetMixin, viewsets.ModelViewSet):
         return super().get_permissions()
 
 class DashBoardCountView(AutoPrefetchViewSetMixin, views.APIView):
+    """
+    Endpoint for dashboard count
+    """
     permission_classes = [permissions.IsAuthenticated]
     renderer_classes = [CustomRenderer]
     
@@ -139,6 +139,9 @@ class DashBoardCountView(AutoPrefetchViewSetMixin, views.APIView):
         
 
 class HostelViewSet(viewsets.ModelViewSet):
+    """
+    Endpoint for hostel (All CRUD activities)
+    """
     queryset = Hostel.objects.all()
     serializer_class = HostelSerializer 
     renderer_classes = [CustomRenderer]

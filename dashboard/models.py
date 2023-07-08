@@ -1,5 +1,5 @@
 from django.db import models
-from authentication.models import StudentUser
+from authentication.models import StudentUser, Hostel
 import uuid 
 # Create your models here.
 
@@ -10,7 +10,7 @@ class Complaint(models.Model):
     title = models.CharField(max_length=200)
     description = models.TextField()
     student = models.ForeignKey(StudentUser, on_delete=models.CASCADE, related_name='complaints', null=True, blank=True)
-    hostel = models.CharField(max_length=100, null= True)
+    hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE, null= True, blank=True)
     date_filed = models.DateTimeField(auto_now_add=True)
     is_resolved = models.BooleanField(default=False)
     

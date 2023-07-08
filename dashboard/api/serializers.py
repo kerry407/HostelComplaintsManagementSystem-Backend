@@ -1,7 +1,6 @@
 from rest_framework import serializers
 from ..models import Complaint 
-from authentication.models import StudentUser, PorterUser, Hostel
-from django.shortcuts import get_object_or_404       
+from authentication.models import StudentUser, PorterUser, Hostel      
         
 class ComplaintSerializer(serializers.ModelSerializer):
     student = serializers.StringRelatedField()
@@ -9,6 +8,7 @@ class ComplaintSerializer(serializers.ModelSerializer):
     student_last_name = serializers.SerializerMethodField()
     student_room_no = serializers.SerializerMethodField()
     student_block_no = serializers.SerializerMethodField()
+    hostel = serializers.StringRelatedField()
     
     def get_student_first_name(self, obj):
         return obj.student.user.first_name
@@ -88,7 +88,7 @@ class HostelSerializer(serializers.ModelSerializer):
     complaint_by_hostel = serializers.SerializerMethodField()
     
     def get_complaint_by_hostel(self, obj):
-        complaints = Complaint.objects.filter(hostel=obj.name).count()
+        complaints = Complaint.objects.filter(hostel=obj).count()
         return complaints
     
     class Meta:
