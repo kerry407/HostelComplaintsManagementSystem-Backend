@@ -20,7 +20,7 @@ class AccountSerializer(serializers.ModelSerializer):
         }
         
     def validate(self, data):
-        match = lambda str: re.search(r'[a-zA-Z]+', str)
+        match = lambda str: re.search(r'[0-9]+$', str)
         
         if data["password"] != data["password2"]:
             raise serializers.ValidationError("The two passwords do not match !")
@@ -28,8 +28,8 @@ class AccountSerializer(serializers.ModelSerializer):
         if len(data["matric_number"]) < 9:
             raise serializers.ValidationError("Matric number must be exactly 9 characters") 
         
-        if match(data["matric_number"]):
-            raise serializers.ValidationError("Invalid matric number format. No letters allowed")
+        if not match(data["matric_number"]):
+            raise serializers.ValidationError("Invalid matric number format. No letters or special characters allowed")
         
         data.pop("password2")
         return data 
