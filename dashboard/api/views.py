@@ -31,8 +31,9 @@ class ComplaintsViewSet(AutoPrefetchViewSetMixin, viewsets.ModelViewSet):
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):
             return Complaint.objects.none()
-        return super().get_queryset().filter(hostel=self.request.user.hostel)
-        
+        if not self.request.user.is_anonymous:
+            return super().get_queryset().filter(hostel=self.request.user.hostel)
+        return super().get_queryset()
 
     def get_permissions(self):
         

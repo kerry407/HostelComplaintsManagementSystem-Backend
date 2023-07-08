@@ -79,9 +79,11 @@ WSGI_APPLICATION = 'HostelManagement.wsgi.application'
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication',
-    ]
+    ],
+    'DATETIME_FORMAT': "%A %d %B, %Y - %H:%M:%S %p",
 }
 
+USE_TZ = True 
 
 SIMPLE_JWT = {
     # "ROTATE_REFRESH_TOKENS": True,
