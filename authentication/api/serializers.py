@@ -1,4 +1,5 @@
 from ..models import *
+import re
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import PasswordField, TokenObtainPairSerializer
 
@@ -6,6 +7,7 @@ from rest_framework_simplejwt.serializers import PasswordField, TokenObtainPairS
 class AccountSerializer(serializers.ModelSerializer):
     password2 = serializers.CharField(style={"input_type": "password"}, write_only=True)
     hostel_name = serializers.SerializerMethodField()
+    
     
     def get_hostel_name(self, obj):
         return obj.hostel.name
@@ -18,11 +20,16 @@ class AccountSerializer(serializers.ModelSerializer):
         }
         
     def validate(self, data):
+        match = lambda str: re.search(r'[a-zA-Z]+', str)
+        
         if data["password"] != data["password2"]:
             raise serializers.ValidationError("The two passwords do not match !")
         
         if len(data["matric_number"]) < 9:
             raise serializers.ValidationError("Matric number must be exactly 9 characters") 
+        
+        if match(data["matric_number"]):
+            raise serializers.ValidationError("Invalid matric number format. No letters allowed")
         
         data.pop("password2")
         return data 
