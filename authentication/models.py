@@ -3,7 +3,6 @@ from django.contrib.auth.models import AbstractUser
 from django.utils.translation import gettext_lazy as _ 
 import uuid
 from django.conf import settings
-
 # Create your models here.
 
 from .manager import CustomUserManager
@@ -55,7 +54,7 @@ class CustomUser(AbstractUser):
     first_name = models.CharField(max_length=50) 
     last_name = models.CharField(max_length=50)
     gender = models.CharField(max_length=10, choices=Hostel.GENDER)
-    matric_number = models.CharField(max_length=9, unique=True, null=True,)
+    matric_number = models.CharField(max_length=11, unique=True, null=True)
     hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE)
     is_student = models.BooleanField(default=False)
     is_porter = models.BooleanField(default=False)
