@@ -87,8 +87,8 @@ USE_TZ = True
 
 SIMPLE_JWT = {
     # "ROTATE_REFRESH_TOKENS": True,
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1440),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=14),
+    'ACCESS_TOKEN_LIFETIME': timedelta(days=14),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=30),
 }
 
 SWAGGER_SETTINGS = {
