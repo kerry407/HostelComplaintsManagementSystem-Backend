@@ -1,5 +1,6 @@
 from ..models import *
 import re
+from datetime import datetime 
 from rest_framework import serializers
 from rest_framework_simplejwt.serializers import PasswordField, TokenObtainPairSerializer
 
@@ -87,6 +88,12 @@ class StudentTokenObtainPairSerializer(TokenObtainPairSerializer):
         
     def validate(self, attrs):
         data = super().validate(attrs)
+        now = datetime.now()
+        refresh = self.get_token(self.user)
+        data["access_token_lifetime"] = refresh.access_token.lifetime
+        access_token_expiry = now + refresh.access_token.lifetime
+        data["access_token_expiry"] = access_token_expiry.strftime("%Y-%m-%d %H:%M:%S")
+        
         data.update(
             {
                 "id": self.user.id,
@@ -116,8 +123,14 @@ class PorterTokenObtainPairSerializer(TokenObtainPairSerializer):
     
     def validate(self, attrs):
         data = super().validate(attrs)
+        now = datetime.now()
+        refresh = self.get_token(self.user)
+        data["access_token_lifetime"] = refresh.access_token.lifetime
+        access_token_expiry = now + refresh.access_token.lifetime
+        data["access_token_expiry"] = access_token_expiry.strftime("%Y-%m-%d %H:%M:%S")
         if self.user.is_student:
             raise serializers.ValidationError("Students not allowed!")
+        
         data.update(
             {
                 "id": self.user.id,
