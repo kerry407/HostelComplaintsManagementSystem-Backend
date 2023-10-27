@@ -39,8 +39,8 @@ class PorterAccountCreateView(generics.CreateAPIView):
         serializer.save(is_porter=True)
 
         
-class AccountDetailsView(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = [CustomPermissions]
+class AccountDetailsView(generics.RetrieveDestroyAPIView):
+    permission_classes = [permissions.IsAdminUser]
     serializer_class = AccountSerializer
     renderer_classes = [CustomRenderer]
     
@@ -54,7 +54,7 @@ class AccountDetailsView(generics.RetrieveUpdateDestroyAPIView):
             
 class AccountsListView(generics.ListAPIView):
     queryset = CustomUser.objects.all()
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAdminUser]
     serializer_class = AccountSerializer 
     renderer_classes = [CustomRenderer]
             

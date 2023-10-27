@@ -6,7 +6,7 @@ from rest_framework_simplejwt.serializers import PasswordField, TokenObtainPairS
 
 
 class AccountSerializer(serializers.ModelSerializer):
-    password2 = serializers.CharField(style={"input_type": "password"}, write_only=True)
+    password2 = serializers.CharField(write_only=True)
     hostel_name = serializers.SerializerMethodField()
     
     
@@ -25,6 +25,9 @@ class AccountSerializer(serializers.ModelSerializer):
         
         if data["password"] != data["password2"]:
             raise serializers.ValidationError("The two passwords do not match !")
+        
+        if 'matric_number' not in data:
+            raise serializers.ValidationError("Matric Number missing! Please add Matric Number")
         
         if len(data["matric_number"]) < 9:
             raise serializers.ValidationError("Matric number must be exactly 9 characters") 
@@ -117,6 +120,7 @@ class PorterTokenObtainPairSerializer(TokenObtainPairSerializer):
         super().__init__(*args, **kwargs)
         self.fields['email'] = serializers.CharField(required=True)
         self.fields['password'] = PasswordField(trim_whitespace=False)
+        self.fields.pop('matric_number')
         CustomUser.USERNAME_FIELD = "email"
         self.username_field = 'email'
     
