@@ -165,7 +165,6 @@ cython_debug/
 *.pyc
 .env
 __pycache__
-db.sqlite3
 venv/
 uploads
 **/staticfiles
