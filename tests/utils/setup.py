@@ -52,6 +52,14 @@ class APITestSetup(APITestCase):
         user = user_serializer.save(is_porter=True)
         return user
     
+    def create_test_superuser(self) -> CustomUser:
+        user = User.objects.create_superuser(
+                                            email="kerry@admin.com", 
+                                            password="Akpororo1",
+                                            hostel=self.hostel
+                                            ) 
+        return user 
+    
     def tearDown(self) -> None:
         print(f"Finished test for {str(self)}...")
         print("---------------")

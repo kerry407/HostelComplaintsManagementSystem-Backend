@@ -2,8 +2,9 @@ from ..utils.setup import APITestSetup
 from django.urls import reverse 
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth import get_user_model
 
-
+User = get_user_model()
 class AuthTestCase(APITestSetup):
     
     def setUp(self) -> None:
@@ -26,6 +27,9 @@ class AuthTestCase(APITestSetup):
         }
         res = self.client.post(url, user_data)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        user = User.objects.get(matric_number="190802003")
+        self.assertTrue(user.is_student)
+        self.assertFalse(user.is_porter)
         
     def test_porter_user_sign_up(self):
         url = reverse("create-porter-account")
@@ -40,6 +44,9 @@ class AuthTestCase(APITestSetup):
         }
         res = self.client.post(url, user_data)
         self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        user = User.objects.get(email="mike@example.com")
+        self.assertTrue(user.is_porter)
+        self.assertFalse(user.is_student)
         
         
     def test_login_student_user(self):
@@ -82,3 +89,18 @@ class AuthTestCase(APITestSetup):
         res = self.client.post(url, data)
         self.assertEqual(res.status_code, status.HTTP_200_OK)
       
+    def test_users_list(self):
+        refresh = RefreshToken.for_user(self.create_test_superuser())
+        access_token = refresh.access_token 
+        self.client.credentials(HTTP_AUTHORIZATION= f"Bearer {access_token}")
+        res = self.client.get(path=reverse('users-list'))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        self.assertTrue(res.wsgi_request.user.is_staff)
+        
+    def test_users_list_with_non_staff(self):
+        refresh = RefreshToken.for_user(self.student_user)
+        access_token = refresh.access_token 
+        self.client.credentials(HTTP_AUTHORIZATION= f"Bearer {access_token}")
+        res = self.client.get(path=reverse('users-list'))
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertFalse(res.wsgi_request.user.is_staff)
