@@ -55,7 +55,7 @@ class StudentDashBoardSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = StudentUser 
-        fields = "__all__"
+        exclude = ('user',)
         
 class PorterDashBoardSerializer(serializers.ModelSerializer):
     porter_details = serializers.SerializerMethodField()

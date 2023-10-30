@@ -3,6 +3,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
+from authentication.models import StudentUser, PorterUser
 
 User = get_user_model()
 class AuthTestCase(APITestSetup):
@@ -30,6 +31,7 @@ class AuthTestCase(APITestSetup):
         user = User.objects.get(matric_number="190802003")
         self.assertTrue(user.is_student)
         self.assertFalse(user.is_porter)
+        self.assertTrue(StudentUser.objects.filter(user=user).exists())
         
     def test_porter_user_sign_up(self):
         url = reverse("create-porter-account")
@@ -47,6 +49,7 @@ class AuthTestCase(APITestSetup):
         user = User.objects.get(email="mike@example.com")
         self.assertTrue(user.is_porter)
         self.assertFalse(user.is_student)
+        self.assertTrue(PorterUser.objects.filter(user=user).exists())
         
         
     def test_login_student_user(self):

@@ -19,7 +19,7 @@ class CustomPermissions(permissions.BasePermission):
             return obj.student == request.user
         
         if hasattr(obj, "user"):
-            return obj.user == request.usr
+            return obj.user == request.user
     
         
 class IsAdminOrReadOnly(permissions.BasePermission):
