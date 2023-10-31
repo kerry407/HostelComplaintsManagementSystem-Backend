@@ -15,6 +15,7 @@ from .serializers import *
 from .renderers import CustomRenderer
 from ..filters import ComplaintFilter
 from .permissions import CustomPermissions
+from .pagination import CustomPagination
 from authentication.models import StudentUser, Hostel
 
 class ComplaintsViewSet(AutoPrefetchViewSetMixin, viewsets.ModelViewSet):
@@ -27,6 +28,7 @@ class ComplaintsViewSet(AutoPrefetchViewSetMixin, viewsets.ModelViewSet):
     filter_backends = [DjangoFilterBackend, SearchFilter]
     filterset_class = ComplaintFilter
     renderer_classes = [CustomRenderer]
+    pagination_class = CustomPagination
     
     def get_queryset(self):
         if getattr(self, "swagger_fake_view", False):

@@ -13,11 +13,10 @@ class CustomPermissions(permissions.BasePermission):
             return True
         
         # Allow editing and deletion operations of complaints to porters only
-        if hasattr(obj, 'hostel'):
+        if hasattr(obj, 'hostel') and hasattr(obj, 'student'):
+            if request.user.is_student and obj.hostel == request.user.hostel:
+                return True 
             return request.user.is_porter and obj.hostel == request.user.hostel
-        
-        if hasattr(obj, 'student'):
-            return obj.student == request.user
         
         if hasattr(obj, "user"):
             return obj.user == request.user

@@ -3,8 +3,8 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import get_user_model
-from authentication.models import StudentUser, PorterUser, CustomUser
-from authentication.api.serializers import StudentSerializer, PorterSerializer
+from authentication.models import CustomUser, StudentUser
+from dashboard.api.serializers import ComplaintSerializer
 
 User = get_user_model() 
 
@@ -175,3 +175,90 @@ class DashBoardAPITestCase(APITestSetup):
         self.assertEqual(results['porter_count'], 1)
         self.assertEqual(results['hostel_gender'], res.wsgi_request.user.gender)
         
+        
+
+class ComplaintsAPITestCase(APITestSetup):
+    
+    def setUp(self) -> None:
+        super().setUp()
+        self.student_user = self.create_test_student_user()
+        complaint_serializer = ComplaintSerializer(data={
+            'title':'Light Issue',
+            'description':'No light in biobaku hostel for days',
+        })
+        complaint_serializer.is_valid(raise_exception=True)
+        student = StudentUser.objects.filter(user=self.student_user).first()
+        self.complaint = complaint_serializer.save(student=student, hostel=self.hostel)
+        refresh = RefreshToken.for_user(self.student_user)
+        access_token = refresh.access_token 
+        self.client.credentials(HTTP_AUTHORIZATION= f"Bearer {access_token}")
+        
+    def test_create_complaint(self):
+        data = {
+            'title':'Water Issue',
+            'description':'Dirty water flows from the tap',
+        }
+        res = self.client.post(path=reverse('create-complaint'), data=data) 
+        self.assertEqual(res.status_code, status.HTTP_201_CREATED)
+        self.assertTrue(res.wsgi_request.user.is_student)
+        
+    def test_create_complaint_by_non_student_user(self):
+        refresh = RefreshToken.for_user(self.create_test_porter_user())
+        access_token = refresh.access_token 
+        self.client.credentials(HTTP_AUTHORIZATION= f"Bearer {access_token}")
+        data = {
+            'title':'Water Issue',
+            'description':'Dirty water flows from the tap',
+        }
+        res = self.client.post(path=reverse('create-complaint'), data=data) 
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertFalse(res.wsgi_request.user.is_student)
+        
+    def test_list_complaints(self):
+        res = self.client.get(path=reverse('complaints-list'))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+    
+    def test_retrieve_complaint(self):
+        res = self.client.get(path=reverse('complaints-detail', args=[self.complaint.id]))
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        
+    def test_update_complaint(self):
+        data = {
+            'title': 'Light Complaint',
+            'description':'There has been no light for days'
+        }
+        res = self.client.put(path=reverse('complaints-detail', args=[self.complaint.id]), data=data)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        
+    def test_partial_update_complaint_with_porter(self):
+        refresh = RefreshToken.for_user(self.create_test_porter_user())
+        access_token = refresh.access_token 
+        self.client.credentials(HTTP_AUTHORIZATION= f"Bearer {access_token}")
+        data = {
+            'is_resolved': True
+        }
+        res = self.client.patch(path=reverse('complaints-detail', args=[self.complaint.id]), data=data)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        
+    def test_partial_update_complaint_with_non_creator_student(self):
+        user = CustomUser.objects.create(email='testcreateuser@test.com', hostel=self.hostel)
+        refresh = RefreshToken.for_user(user)
+        access_token = refresh.access_token 
+        self.client.credentials(HTTP_AUTHORIZATION= f"Bearer {access_token}")
+        data = {
+            'description':'There has been power outage for days'
+        }
+        res = self.client.patch(path=reverse('complaints-detail', args=[self.complaint.id]), data=data)
+        self.assertEqual(res.status_code, status.HTTP_403_FORBIDDEN)
+        
+    def test_partial_update_complaint(self):
+        data = {
+            'description':'There has been power outage for days'
+        }
+        res = self.client.patch(path=reverse('complaints-detail', args=[self.complaint.id]), data=data)
+        self.assertEqual(res.status_code, status.HTTP_200_OK)
+        
+    
+    def test_delete_complaint(self):
+        res = self.client.delete(path=reverse('complaints-detail', args=[self.complaint.id]))
+        self.assertEqual(res.status_code, status.HTTP_204_NO_CONTENT)

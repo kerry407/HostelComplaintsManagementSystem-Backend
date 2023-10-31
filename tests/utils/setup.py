@@ -18,8 +18,15 @@ class APITestSetup(APITestCase):
             'no_of_rooms': 200,
             'gender': 'male'
         })
+        hostel_serializer2 = HostelSerializer(data={
+            'name': 'King Jaja Hall',
+            'no_of_rooms': 205,
+            'gender': 'male'
+        })
         hostel_serializer.is_valid(raise_exception=True)
+        hostel_serializer2.is_valid(raise_exception=True)
         self.hostel = hostel_serializer.save()
+        self.hostel2 = hostel_serializer2.save()
         print("---------------")
         return super().setUp()
         
