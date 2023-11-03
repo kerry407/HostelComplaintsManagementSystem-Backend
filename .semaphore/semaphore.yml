@@ -14,4 +14,15 @@ blocks:
             - 'checkout '
             - 'mkdir .pip-cache '
             - 'cache restore '
-            - 'pip install --cache-dir .pip-cache -r requirements.txt '
+            - 'pip install --cache-dir .pip_cache -r requirements.txt '
+  - name: Test
+    task:
+      prologue:
+        commands:
+          - sem-version python 3.9
+          - 'checkout '
+          - 'cache restore '
+          - 'pip install --cache-dir .pip_cache '
+      jobs:
+        - name: 'Job #1'
+          commands: []
