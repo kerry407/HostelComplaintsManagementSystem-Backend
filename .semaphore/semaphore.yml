@@ -1,0 +1,34 @@
+version: v1.0
+name: Initial Pipeline
+agent:
+  machine:
+    type: e1-standard-2
+    os_image: ubuntu2004
+blocks:
+  - name: Build
+    task:
+      jobs:
+        - name: pip
+          commands:
+            - sem-version python 3.9
+            - 'checkout '
+            - 'mkdir .pip-cache '
+            - 'cache restore '
+            - 'pip install --cache-dir .pip_cache -r requirements.txt '
+      env_vars:
+        - name: SECRET_KEY
+          value: 'django-insecure-1^br7q2yhlt9nap7=1+bq=galfh%zibsk8_mr^=dwr@b(x$i#('
+  - name: Test
+    task:
+      prologue:
+        commands:
+          - sem-version python 3.9
+          - 'checkout '
+          - 'cache restore '
+          - 'pip install --cache-dir .pip_cache -r requirements.txt '
+      jobs:
+        - name: Unit test
+          commands:
+            - python manage.py makemigrations
+            - 'python manage.py migrate '
+            - 'python manage.py test '
