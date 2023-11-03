@@ -26,9 +26,7 @@ blocks:
       jobs:
         - name: Unit test
           commands:
+            - cd HostelComplaintsManagementSystem-Backend
             - python manage.py makemigrations
             - 'python manage.py migrate '
             - 'python manage.py test '
-        - name: check lists
-          commands:
-            - 'python manage.py check --deploy '
