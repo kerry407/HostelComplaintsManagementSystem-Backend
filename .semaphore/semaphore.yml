@@ -26,6 +26,7 @@ blocks:
       jobs:
         - name: Unit test
           commands:
+            - cd HostelManagement
             - python manage.py makemigrations
             - 'python manage.py migrate '
             - 'python manage.py test '
