@@ -55,13 +55,13 @@ class CustomUser(AbstractUser):
     last_name = models.CharField(max_length=50)
     gender = models.CharField(max_length=10, choices=Hostel.GENDER)
     matric_number = models.CharField(max_length=11, unique=True, null=True)
-    hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE)
+    hostel = models.ForeignKey(Hostel, on_delete=models.CASCADE, null=True)
     is_student = models.BooleanField(default=False)
     is_porter = models.BooleanField(default=False)
     
     
     USERNAME_FIELD = 'matric_number' 
-    REQUIRED_FIELDS = ["first_name", "last_name"]
+    REQUIRED_FIELDS = ["first_name", "last_name", "email"]
     
     objects = CustomUserManager()
     

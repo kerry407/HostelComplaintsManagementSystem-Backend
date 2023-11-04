@@ -23,6 +23,9 @@ class AccountSerializer(serializers.ModelSerializer):
     def validate(self, data):
         match = lambda str: re.search(r'[0-9]+$', str)
         
+        if 'hostel' not in data:
+            raise serializers.ValidationError("Hostel cannot be null")
+        
         if data["password"] != data["password2"]:
             raise serializers.ValidationError("The two passwords do not match !")
         
@@ -63,6 +66,10 @@ class PorterAccountSerializer(serializers.ModelSerializer):
     def validate(self, data):
         if data["password"] != data["password2"]:
             raise serializers.ValidationError("The two passwords do not match !")
+        
+        if 'hostel' not in data:
+            raise serializers.ValidationError("Hostel cannot be null")
+        
         data.pop("password2")
         return data 
     

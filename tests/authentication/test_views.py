@@ -33,6 +33,20 @@ class AuthTestCase(APITestSetup):
         self.assertFalse(user.is_porter)
         self.assertTrue(StudentUser.objects.filter(user=user).exists())
         
+    def test_student_user_sign_up_without_hostel(self):
+        url = reverse("create-student-account")
+        user_data = {
+        "first_name": "Preston",
+        "last_name": "Nwokocha",
+        "matric_number": "190802003",
+        "email": "preston@example.com",
+        "gender": "male",
+        "password": "Akpororo1",
+        "password2": "Akpororo1"
+        }
+        res = self.client.post(url, user_data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
+        
     def test_porter_user_sign_up(self):
         url = reverse("create-porter-account")
         user_data = {
@@ -50,6 +64,19 @@ class AuthTestCase(APITestSetup):
         self.assertTrue(user.is_porter)
         self.assertFalse(user.is_student)
         self.assertTrue(PorterUser.objects.filter(user=user).exists())
+        
+    def test_porter_user_sign_up_without_hostel(self):
+        url = reverse("create-porter-account")
+        user_data = {
+        "first_name": "Mike",
+        "last_name": "Nwokocha",
+        "email": "mike@example.com",
+        "gender": "male",
+        "password": "Akpororo1",
+        "password2": "Akpororo1"
+        }
+        res = self.client.post(url, user_data)
+        self.assertEqual(res.status_code, status.HTTP_400_BAD_REQUEST)
         
         
     def test_login_student_user(self):

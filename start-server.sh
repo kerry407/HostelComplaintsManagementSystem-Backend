@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # start-server.sh
 if [[ -n "$DJANGO_SUPERUSER_USERNAME" && -n "$DJANGO_SUPERUSER_PASSWORD" ]] ; 
-then (python manage.py createsuperuser --no-input)
+then python manage.py createsuperuser --no-input
 fi
 (gunicorn HostelManagement.wsgi 
 --user www-data 
