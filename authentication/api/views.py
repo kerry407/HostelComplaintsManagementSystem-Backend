@@ -43,6 +43,7 @@ class AccountDetailsView(generics.RetrieveDestroyAPIView):
     permission_classes = [permissions.IsAdminUser]
     serializer_class = AccountSerializer
     renderer_classes = [CustomRenderer]
+    queryset = get_user_model().objects.all()
     
     def perform_update(self, serializer):
         if "password" in self.request.data:
